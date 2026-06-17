@@ -1,4 +1,4 @@
-const { z } = require('zod');
+import { z } from 'zod';
 
 // Strict schema for registration (drives the 400 "Validation errors" response).
 const credentialsSchema = z.object({
@@ -17,4 +17,4 @@ const loginSchema = z.object({
     .min(1, 'password is required'),
 });
 
-module.exports = { credentialsSchema, loginSchema };
+export { credentialsSchema, loginSchema };

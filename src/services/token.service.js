@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config');
+import jwt from 'jsonwebtoken';
+import config from '../config/index.js';
 
 function signAccessToken(payload) {
   return jwt.sign(payload, config.jwt.secret, {
@@ -22,4 +22,4 @@ function cookieOptions() {
   };
 }
 
-module.exports = { signAccessToken, verifyAccessToken, cookieOptions };
+export { signAccessToken, verifyAccessToken, cookieOptions };

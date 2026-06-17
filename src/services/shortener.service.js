@@ -1,6 +1,6 @@
-const axios = require('axios');
-const config = require('../config');
-const AppError = require('../utils/AppError');
+import axios from 'axios';
+import config from '../config/index.js';
+import AppError from '../utils/AppError.js';
 
 // --- Providers -------------------------------------------------------------
 // Each provider takes a long URL and returns a short URL string by calling an
@@ -110,4 +110,4 @@ async function createShortUrl(longUrl) {
   }
 }
 
-module.exports = { createShortUrl };
+export { createShortUrl };

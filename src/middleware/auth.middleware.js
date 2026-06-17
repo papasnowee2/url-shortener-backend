@@ -1,6 +1,6 @@
-const AppError = require('../utils/AppError');
-const { verifyAccessToken } = require('../services/token.service');
-const config = require('../config');
+import AppError from '../utils/AppError.js';
+import { verifyAccessToken } from '../services/token.service.js';
+import config from '../config/index.js';
 
 // Reads the JWT from the httpOnly accessToken cookie and attaches the user id.
 function requireAuth(req, _res, next) {
@@ -19,4 +19,4 @@ function requireAuth(req, _res, next) {
   }
 }
 
-module.exports = requireAuth;
+export default requireAuth;

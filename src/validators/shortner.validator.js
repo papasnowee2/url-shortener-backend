@@ -1,4 +1,4 @@
-const { z } = require('zod');
+import { z } from 'zod';
 
 const urlBodySchema = z.object({
   url: z
@@ -7,4 +7,4 @@ const urlBodySchema = z.object({
     .url('Invalid URL'),
 });
 
-module.exports = { urlBodySchema };
+export { urlBodySchema };

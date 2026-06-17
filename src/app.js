@@ -1,10 +1,10 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const config = require('./config');
-const userRoutes = require('./routes/user.routes');
-const shortnerRoutes = require('./routes/shortner.routes');
-const { notFound, errorHandler } = require('./middleware/error.middleware');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import config from './config/index.js';
+import userRoutes from './routes/user.routes.js';
+import shortnerRoutes from './routes/shortner.routes.js';
+import { notFound, errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
 
@@ -27,4 +27,4 @@ app.use('/shortner', shortnerRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

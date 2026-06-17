@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const ShortLink = require('../models/shortLink.model');
-const AppError = require('../utils/AppError');
-const asyncHandler = require('../utils/asyncHandler');
-const { urlBodySchema } = require('../validators/shortner.validator');
-const { createShortUrl } = require('../services/shortener.service');
+import mongoose from 'mongoose';
+import ShortLink from '../models/shortLink.model.js';
+import AppError from '../utils/AppError.js';
+import asyncHandler from '../utils/asyncHandler.js';
+import { urlBodySchema } from '../validators/shortner.validator.js';
+import { createShortUrl } from '../services/shortener.service.js';
 
 // Finds an owned link, enforcing: valid id -> exists -> ownership.
 // `notOwnerStatus` differs per the contract (400 on update, 403 on delete).
@@ -67,4 +67,4 @@ const remove = asyncHandler(async (req, res) => {
   res.status(200).json({ id: link._id.toString() });
 });
 
-module.exports = { create, list, update, remove };
+export { create, list, update, remove };

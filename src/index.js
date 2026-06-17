@@ -1,6 +1,6 @@
-const app = require('./app');
-const config = require('./config');
-const connectDB = require('./db/connect');
+import app from './app.js';
+import config from './config/index.js';
+import connectDB from './db/connect.js';
 
 async function start() {
   try {

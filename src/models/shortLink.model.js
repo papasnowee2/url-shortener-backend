@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const shortLinkSchema = new mongoose.Schema(
   {
@@ -29,4 +29,4 @@ shortLinkSchema.methods.toContract = function toContract() {
   };
 };
 
-module.exports = mongoose.model('ShortLink', shortLinkSchema);
+export default mongoose.model('ShortLink', shortLinkSchema);

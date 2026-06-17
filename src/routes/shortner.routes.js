@@ -1,11 +1,11 @@
-const { Router } = require('express');
-const requireAuth = require('../middleware/auth.middleware');
-const {
+import { Router } from 'express';
+import requireAuth from '../middleware/auth.middleware.js';
+import {
   create,
   list,
   update,
   remove,
-} = require('../controllers/shortner.controller');
+} from '../controllers/shortner.controller.js';
 
 const router = Router();
 
@@ -17,4 +17,4 @@ router.get('/', list);
 router.patch('/:id', update);
 router.delete('/:id', remove);
 
-module.exports = router;
+export default router;

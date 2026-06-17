@@ -1,16 +1,16 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/user.model');
-const AppError = require('../utils/AppError');
-const asyncHandler = require('../utils/asyncHandler');
-const {
+import bcrypt from 'bcryptjs';
+import User from '../models/user.model.js';
+import AppError from '../utils/AppError.js';
+import asyncHandler from '../utils/asyncHandler.js';
+import {
   credentialsSchema,
   loginSchema,
-} = require('../validators/user.validator');
-const {
+} from '../validators/user.validator.js';
+import {
   signAccessToken,
   cookieOptions,
-} = require('../services/token.service');
-const config = require('../config');
+} from '../services/token.service.js';
+import config from '../config/index.js';
 
 // POST /users  -> create user, set httpOnly accessToken cookie, return { id }
 const register = asyncHandler(async (req, res) => {
@@ -56,4 +56,4 @@ const logout = asyncHandler(async (_req, res) => {
   res.status(200).send();
 });
 
-module.exports = { register, login, logout };
+export { register, login, logout };

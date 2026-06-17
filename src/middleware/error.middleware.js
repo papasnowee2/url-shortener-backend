@@ -1,5 +1,5 @@
-const { ZodError } = require('zod');
-const AppError = require('../utils/AppError');
+import { ZodError } from 'zod';
+import AppError from '../utils/AppError.js';
 
 function notFound(_req, res) {
   res.status(404).json({ message: 'Route not found' });
@@ -31,4 +31,4 @@ function errorHandler(err, _req, res, _next) {
   return res.status(500).json({ message: 'Internal server error' });
 }
 
-module.exports = { notFound, errorHandler };
+export { notFound, errorHandler };
