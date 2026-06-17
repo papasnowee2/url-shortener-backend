@@ -10,7 +10,6 @@ import { createShortUrl } from '../services/shortener.service.js';
 async function findOwnedLink(
   id: string,
   userId: string,
-  notOwnerStatus: number
 ): Promise<IShortLink> {
   if (!mongoose.isValidObjectId(id)) {
     throw new AppError(400, 'Invalid short link ID');
@@ -22,7 +21,7 @@ async function findOwnedLink(
   }
 
   if (link.owner.toString() !== userId) {
-    throw new AppError(notOwnerStatus, 'You are not the owner of this link');
+    throw new AppError(403, 'You are not the owner of this link');
   }
 
   return link;
@@ -58,7 +57,7 @@ const update = asyncHandler(async (req, res) => {
   if (typeof linkId !== 'string') {
     throw new AppError(400, 'Invalid short link ID');
   }
-  const link = await findOwnedLink(linkId, req.user.id, 400);
+  const link = await findOwnedLink(linkId, req.user.id);
 
   link.originalLink = url;
   link.shortLink = await createShortUrl(url);
@@ -73,7 +72,7 @@ const remove = asyncHandler(async (req, res) => {
   if (typeof linkId !== 'string') {
     throw new AppError(400, 'Invalid short link ID');
   }
-  const link = await findOwnedLink(linkId, req.user.id, 403);
+  const link = await findOwnedLink(linkId, req.user.id);
   await link.deleteOne();
 
   res.status(200).json({ id: link._id.toString() });
