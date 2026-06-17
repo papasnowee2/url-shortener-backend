@@ -2,12 +2,14 @@ import axios from 'axios';
 import config from '../config/index.js';
 import AppError from '../utils/AppError.js';
 
+type ShortenerProviderFn = (longUrl: string) => Promise<string>;
+
 // --- Providers -------------------------------------------------------------
 // Each provider takes a long URL and returns a short URL string by calling an
 // external, third-party shortening service.
 
-async function cleanuriProvider(longUrl) {
-  const { data } = await axios.post(
+async function cleanuriProvider(longUrl: string): Promise<string> {
+  const { data } = await axios.post<{ result_url?: string; error?: string }>(
     'https://cleanuri.com/api/v1/shorten',
     new URLSearchParams({ url: longUrl }).toString(),
     {
@@ -16,7 +18,7 @@ async function cleanuriProvider(longUrl) {
     }
   );
 
-  if (data && data.result_url) {
+  if (data?.result_url) {
     return data.result_url;
   }
 
@@ -24,25 +26,28 @@ async function cleanuriProvider(longUrl) {
   throw new AppError(502, `Shortener provider error: ${message}`);
 }
 
-async function isgdProvider(longUrl) {
-  const { data } = await axios.get('https://is.gd/create.php', {
-    params: { format: 'json', url: longUrl },
-    timeout: 10000,
-  });
+async function isgdProvider(longUrl: string): Promise<string> {
+  const { data } = await axios.get<{ shorturl?: string; errormessage?: string } | string>(
+    'https://is.gd/create.php',
+    {
+      params: { format: 'json', url: longUrl },
+      timeout: 10000,
+    }
+  );
 
-  if (data && data.shorturl) {
+  if (data && typeof data === 'object' && data.shorturl) {
     return data.shorturl;
   }
 
   // is.gd returns { errorcode, errormessage } as JSON on failure, but can also
   // return a plain-text error string when its backend is unhealthy.
   const message =
-    data?.errormessage ||
+    (typeof data === 'object' && data?.errormessage) ||
     (typeof data === 'string' ? data : 'Failed to create short link');
   throw new AppError(502, `Shortener provider error: ${message}`);
 }
 
-async function tinyurlProvider(longUrl) {
+async function tinyurlProvider(longUrl: string): Promise<string> {
   if (!config.shortener.tinyurlToken) {
     throw new AppError(
       500,
@@ -50,7 +55,7 @@ async function tinyurlProvider(longUrl) {
     );
   }
 
-  const { data } = await axios.post(
+  const { data } = await axios.post<{ data?: { tiny_url?: string } }>(
     'https://api.tinyurl.com/create',
     { url: longUrl },
     {
@@ -67,8 +72,8 @@ async function tinyurlProvider(longUrl) {
   throw new AppError(502, 'Shortener provider error: TinyURL request failed');
 }
 
-async function spoomeProvider(longUrl) {
-  const { data } = await axios.post(
+async function spoomeProvider(longUrl: string): Promise<string> {
+  const { data } = await axios.post<{ short_url?: string; error?: string }>(
     'https://spoo.me/api/v1/shorten',
     { long_url: longUrl },
     {
@@ -85,14 +90,14 @@ async function spoomeProvider(longUrl) {
   throw new AppError(502, `Shortener provider error: ${message}`);
 }
 
-const providers = {
+const providers: Record<string, ShortenerProviderFn> = {
   cleanuri: cleanuriProvider,
   isgd: isgdProvider,
   tinyurl: tinyurlProvider,
   spoome: spoomeProvider,
 };
 
-async function createShortUrl(longUrl) {
+async function createShortUrl(longUrl: string): Promise<string> {
   const provider = providers[config.shortener.provider];
   if (!provider) {
     throw new AppError(

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import ShortLink from '../models/shortLink.model.js';
+import ShortLink, { type IShortLink } from '../models/shortLink.model.js';
 import AppError from '../utils/AppError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { urlBodySchema } from '../validators/shortner.validator.js';
@@ -7,7 +7,11 @@ import { createShortUrl } from '../services/shortener.service.js';
 
 // Finds an owned link, enforcing: valid id -> exists -> ownership.
 // `notOwnerStatus` differs per the contract (400 on update, 403 on delete).
-async function findOwnedLink(id, userId, notOwnerStatus) {
+async function findOwnedLink(
+  id: string,
+  userId: string,
+  notOwnerStatus: number
+): Promise<IShortLink> {
   if (!mongoose.isValidObjectId(id)) {
     throw new AppError(400, 'Invalid short link ID');
   }
@@ -50,7 +54,11 @@ const list = asyncHandler(async (req, res) => {
 // PATCH /shortner/:id -> regenerate the short link for a new destination URL
 const update = asyncHandler(async (req, res) => {
   const { url } = urlBodySchema.parse(req.body);
-  const link = await findOwnedLink(req.params.id, req.user.id, 400);
+  const linkId = req.params.id;
+  if (typeof linkId !== 'string') {
+    throw new AppError(400, 'Invalid short link ID');
+  }
+  const link = await findOwnedLink(linkId, req.user.id, 400);
 
   link.originalLink = url;
   link.shortLink = await createShortUrl(url);
@@ -61,7 +69,11 @@ const update = asyncHandler(async (req, res) => {
 
 // DELETE /shortner/:id -> remove a short link, return its id
 const remove = asyncHandler(async (req, res) => {
-  const link = await findOwnedLink(req.params.id, req.user.id, 403);
+  const linkId = req.params.id;
+  if (typeof linkId !== 'string') {
+    throw new AppError(400, 'Invalid short link ID');
+  }
+  const link = await findOwnedLink(linkId, req.user.id, 403);
   await link.deleteOne();
 
   res.status(200).json({ id: link._id.toString() });

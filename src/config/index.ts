@@ -1,6 +1,27 @@
 import 'dotenv/config';
 
-const config = {
+export type ShortenerProviderName = 'cleanuri' | 'isgd' | 'tinyurl' | 'spoome';
+
+export interface Config {
+  env: string;
+  port: number;
+  clientOrigin: string;
+  mongoUri: string;
+  jwt: {
+    secret: string;
+    expiresIn: string;
+  };
+  cookie: {
+    name: string;
+    maxAge: number;
+  };
+  shortener: {
+    provider: string;
+    tinyurlToken: string;
+  };
+}
+
+const config: Config = {
   env: process.env.NODE_ENV || 'development',
   port: Number(process.env.PORT) || 3000,
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',

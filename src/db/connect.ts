@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, { type Connection } from 'mongoose';
 import config from '../config/index.js';
 
-async function connectDB() {
+async function connectDB(): Promise<Connection> {
   mongoose.set('strictQuery', true);
   await mongoose.connect(config.mongoUri);
   console.log(`[db] connected to MongoDB at ${config.mongoUri}`);
